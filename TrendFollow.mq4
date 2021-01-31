@@ -15,7 +15,7 @@ float MIN_LOT_SIZE = 0.01;
 float BASE_LOT = MAX_LOT_SIZE * CANDLE_SIZE;
 
 int TP_FACTOR = 2;
-int SL_FACTOR = 2;
+int SL_FACTOR = 3;
 int CHECK_FACTOR = 4;
 
 datetime currentTradeCandle;
@@ -50,7 +50,7 @@ void OnTick()
       return;
    }
    float candleSize = Close[1]-Open[1];
-   if(candleSize >= CANDLE_SIZE && Close[0]-Open[0] > candleSize/CHECK_FACTOR ){
+   if(candleSize >= CANDLE_SIZE && Close[0] > Open[0] ){
       float lot = BASE_LOT / candleSize;
       if (lot > MAX_LOT_SIZE) {
          lot = MAX_LOT_SIZE;
@@ -63,7 +63,7 @@ void OnTick()
       OrderSend(Symbol(),OP_BUY,lot ,Ask,2,stopLoss, takeProfit);
       currentTradeCandle = Time[0];
    }
-   else if (candleSize <= CANDLE_SIZE * (-1) && Close[0]-Open[0] < candleSize/CHECK_FACTOR) {
+   else if (candleSize <= CANDLE_SIZE * (-1) && Close[0] < Open[0]) {
       float lot = BASE_LOT / candleSize * (-1);
       if (lot > MAX_LOT_SIZE) {
          lot = MAX_LOT_SIZE;
@@ -75,7 +75,7 @@ void OnTick()
       Print("Previous candleSize ", candleSize, " SELL SL ", stopLoss, " TP ", takeProfit, " lot ", lot);
       OrderSend(Symbol(),OP_SELL, lot, Bid, 2, stopLoss , takeProfit);
       currentTradeCandle = Time[0];
-   } 
+   }
    
 }
 //+------------------------------------------------------------------+
